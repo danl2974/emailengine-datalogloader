@@ -24,6 +24,7 @@ public class LogDataLoader {
 		
 		try{
 		  String sproc = "{call test.LoadEmailSuccess(?,?,?,?,?,?)}";
+		  Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		  Connection con = DriverManager.getConnection(azureConnection);
 		  callableStatement = con.prepareCall(sproc);
 		  
@@ -41,9 +42,13 @@ public class LogDataLoader {
 		      }catch(Exception e){log.info(e.getMessage());}
 		 
 		  con.close();
+		  ProgressRegister.writeLastUpdateSuccess(successList.get(successList.size() - 1).mailingId);
 		}
 		catch(SQLException sqle){
 			log.info(sqle.getMessage());
+		}
+		catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 	
@@ -56,6 +61,7 @@ public class LogDataLoader {
 		
 		try{
 		  String sproc = "{call test.LoadEmailBounce(?,?,?,?,?,?,?)}";
+		  Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		  Connection con = DriverManager.getConnection(azureConnection);
 		  callableStatement = con.prepareCall(sproc);
 		  
@@ -74,9 +80,13 @@ public class LogDataLoader {
 		      }catch(Exception e){log.info(e.getMessage());}
 		 
 		  con.close();
+		  ProgressRegister.writeLastUpdateBounce(bounceList.get(bounceList.size() - 1).mailingId);
 		}
 		catch(SQLException sqle){
 			log.info(sqle.getMessage());
+		}
+		catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 	

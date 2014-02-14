@@ -18,13 +18,13 @@ public class DataLoaderScheduledJob implements Job {
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
 		try{
-		  PostfixLogParser postfixParser = new PostfixLogParser();
-		  
-		  ArrayList<EmailSuccess> successRecords = postfixParser.processSuccess();
-		  ArrayList<EmailBounce> bounceRecords = postfixParser.processBounce();
+	      Date date = new Date();
+		  System.out.println("JOB STARTED AT :" + date.toString());
+		  ArrayList<EmailSuccess> successRecords = PostfixLogParser.processSuccess();
+		  ArrayList<EmailBounce> bounceRecords = PostfixLogParser.processBounce();
 		
-		  LogDataLoader.loadSuccessData(successRecords); 
-		  LogDataLoader.loadBounceData(bounceRecords);      
+		  LogDataLoader.loadSuccessData(successRecords);
+		  LogDataLoader.loadBounceData(bounceRecords); 
 
 		}
 		catch(Exception e){

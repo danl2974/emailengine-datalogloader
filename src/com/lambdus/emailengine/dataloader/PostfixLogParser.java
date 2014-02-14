@@ -19,28 +19,26 @@ public class PostfixLogParser {
 	
 	private static final String POSTFIX_LOG_PATH = "/var/log/mail.log";
 	
-	private static final String POSTFIX_SUCCESS_MARKER = "status=sent (250 ok dirdel)";
+	private static final String POSTFIX_SUCCESS_MARKER = "status=sent (250";  
 	
 	private static final String POSTFIX_BOUNCE_MARKER = "status=bounced";
 	
-	BufferedReader br;
-	
-	public PostfixLogParser(){
-		try{
-		   this.br = new BufferedReader(new FileReader(POSTFIX_LOG_PATH));
-		}catch(Exception e){log.info(e.getMessage());}
+
 		
-	}
-	
-	public ArrayList<EmailSuccess> processSuccess(){
+	public static ArrayList<EmailSuccess> processSuccess(){
 	
 		ArrayList<EmailSuccess> successList = new ArrayList<EmailSuccess>();
+		String successProgress = ProgressRegister.readLastUpdateSuccess();
+		System.out.println("processSuccess progress " + successProgress);
+		
 		try{
+			BufferedReader br = new BufferedReader(new FileReader(POSTFIX_LOG_PATH));
 			String sLine;
 		 
-		    while ((sLine = this.br.readLine()) != null) 
+		    while ((sLine = br.readLine()) != null) 
 		    {
-		    	if(sLine.indexOf(POSTFIX_SUCCESS_MARKER) != -1){
+		    	
+		        if(sLine.indexOf(POSTFIX_SUCCESS_MARKER) != -1){
 		             EmailSuccess success = new EmailSuccess(); 		
 		             success.toAddress = getToAddress(sLine);
 		             success.timestamp = getTimestamp(sLine);
@@ -49,9 +47,17 @@ public class PostfixLogParser {
 		             success.remoteIP = remoteData[1];
 		             success.outboundHost = "";
 		             success.outboundIP = "";
+		             success.mailingId = getMailingId(sLine);
 		             successList.add(success);
+		             if (checkProgressMailingId(sLine, successProgress))
+		             {
+		            	 successList.clear();
+		            	 log.info("clear called");
+		             }		             
 		             log.info("success added " + success.remoteIP + " " + success.timestamp);
-		    	}
+		    	     }
+		        
+		    	
 		    }
 		    br.close();
 	    } 
@@ -65,13 +71,17 @@ public class PostfixLogParser {
 	}
 	
 	
-	public ArrayList<EmailBounce> processBounce(){
+	public static  ArrayList<EmailBounce> processBounce(){
 
 		ArrayList<EmailBounce> bounceList = new ArrayList<EmailBounce>();
+		String bounceProgress = ProgressRegister.readLastUpdateBounce();
+		System.out.println("processBounce progress " + bounceProgress);
+		
 		try{
+			BufferedReader br = new BufferedReader(new FileReader(POSTFIX_LOG_PATH));
 			String sLine;
 		 
-		    while ((sLine = this.br.readLine()) != null) 
+		    while ((sLine = br.readLine()) != null) 
 		    {
 		    	if(sLine.indexOf(POSTFIX_BOUNCE_MARKER) != -1){
 		             EmailBounce bounce = new EmailBounce(); 		
@@ -83,7 +93,11 @@ public class PostfixLogParser {
 		             bounce.outboundHost = "";
 		             bounce.outboundIP = "";
 		             bounce.ispResponse = getIspResponse(sLine);
+		             bounce.mailingId = getMailingId(sLine);
 		             bounceList.add(bounce);
+		             if (checkProgressMailingId(sLine, bounceProgress)){
+		            	 bounceList.clear();
+		             }
 		             log.info("bounce added " + bounce.ispResponse);
 		    	}
 		    }
@@ -135,6 +149,19 @@ public class PostfixLogParser {
 		return response;
 	}
 	
+	static private String getMailingId(String line){
+		return line.split(": to")[0].split("]: ")[1];
+	}
+	
+	private static boolean checkProgressMailingId(String line, String progress){
+		int found = line.indexOf(progress);
+		if (found > 0){
+			return true;
+		}
+		else{
+		    return false;
+		}
+	} 
 	
 	
 }

@@ -24,6 +24,8 @@ public class InitLoader {
 	public static void main(String args[]){
 		 
 		 try{
+			System.out.println("calling InitLoader main");
+			 
 		    SchedulerFactory sf = new StdSchedulerFactory();
 		    Scheduler scheduler = sf.getScheduler();
 		    scheduler.start();
