@@ -15,16 +15,14 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 
-import java.util.logging.Logger;
 
 public class InitLoader {
-	
-	private static final Logger log = Logger.getLogger(InitLoader.class.getName());
+
 	
 	public static void main(String args[]){
 		 
 		 try{
-			System.out.println("calling InitLoader main");
+			System.out.println("InitLoader main called\n\n");
 			 
 		    SchedulerFactory sf = new StdSchedulerFactory();
 		    Scheduler scheduler = sf.getScheduler();
@@ -45,7 +43,7 @@ public class InitLoader {
 	        scheduler.scheduleJob(job, trigger);
 		 }
 		 catch(Exception e){
-			 log.info(e.getMessage());
+			 System.out.println(e.getMessage());
 		 }
 		
 	}

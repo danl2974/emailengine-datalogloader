@@ -30,7 +30,7 @@ public class ProgressRegister {
 		catch(Exception e){
 		  	
 		}
-		System.out.println("readLastUpdateSuccess called " + sb.toString());
+		System.out.println("Last Update Success Read: " + sb.toString());
 		return sb.toString();
 		
 	}
@@ -46,7 +46,7 @@ public class ProgressRegister {
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(progressInfo);
 			bw.close();
-			System.out.println("writeLastUpdateSuccess called " + progressInfo);
+			System.out.println("Last Update Success Write: " + progressInfo);
 			
 			return true;
 		}
@@ -78,7 +78,7 @@ public class ProgressRegister {
 		catch(Exception e){
 		  	
 		}
-		System.out.println("readLastUpdateBounce called " + sb.toString());
+		System.out.println("Last Update Bounce Read: " + sb.toString());
 		return sb.toString();
 		
 	}
@@ -94,7 +94,7 @@ public class ProgressRegister {
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(progressInfo);
 			bw.close();
-			System.out.println("writeLastUpdateBounce called " + progressInfo);
+			System.out.println("Last Update Bounce Write: " + progressInfo);
 			
 			return true;
 		}

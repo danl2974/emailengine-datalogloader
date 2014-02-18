@@ -10,13 +10,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import java.util.logging.Logger;
 
 
 public class PostfixLogParser {
-	
-	private static final Logger log = Logger.getLogger(PostfixLogParser.class.getName());
-	
+		
 	private static final String POSTFIX_LOG_PATH = "/var/log/mail.log";
 	
 	private static final String POSTFIX_SUCCESS_MARKER = "status=sent (250";  
@@ -29,7 +26,7 @@ public class PostfixLogParser {
 	
 		ArrayList<EmailSuccess> successList = new ArrayList<EmailSuccess>();
 		String successProgress = ProgressRegister.readLastUpdateSuccess();
-		System.out.println("processSuccess progress " + successProgress);
+		System.out.println("Success Record progress " + successProgress);
 		
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(POSTFIX_LOG_PATH));
@@ -45,16 +42,16 @@ public class PostfixLogParser {
 		             String[] remoteData = getRemoteData(sLine);
 		             success.remoteHost = remoteData[0];
 		             success.remoteIP = remoteData[1];
-		             success.outboundHost = "";
-		             success.outboundIP = "";
+		             String[] outboundData = getOutboundData(sLine);
+		             success.outboundHost = outboundData[0];
+		             success.outboundIP = outboundData[1];
 		             success.mailingId = getMailingId(sLine);
 		             successList.add(success);
 		             if (checkProgressMailingId(sLine, successProgress))
-		             {
+		               {
 		            	 successList.clear();
-		            	 log.info("clear called");
-		             }		             
-		             log.info("success added " + success.remoteIP + " " + success.timestamp);
+		               }		             
+		            
 		    	     }
 		        
 		    	
@@ -63,8 +60,10 @@ public class PostfixLogParser {
 	    } 
 		
 		catch (IOException e) {
-		    log.info(e.getMessage());
+			System.out.println("Success Process Exception: " + e.getMessage());
 	     } 
+		
+		System.out.println("Success Records Processed: " + successList.size());
 		
 		return successList;
 	
@@ -75,7 +74,7 @@ public class PostfixLogParser {
 
 		ArrayList<EmailBounce> bounceList = new ArrayList<EmailBounce>();
 		String bounceProgress = ProgressRegister.readLastUpdateBounce();
-		System.out.println("processBounce progress " + bounceProgress);
+		System.out.println("Bounce Record progress " + bounceProgress);
 		
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(POSTFIX_LOG_PATH));
@@ -90,23 +89,25 @@ public class PostfixLogParser {
 		             String[] remoteData = getRemoteData(sLine);
 		             bounce.remoteHost = remoteData[0];
 		             bounce.remoteIP = remoteData[1];
-		             bounce.outboundHost = "";
-		             bounce.outboundIP = "";
+		             String[] outboundData = getOutboundData(sLine);
+		             bounce.outboundHost = outboundData[0];
+		             bounce.outboundIP = outboundData[1];
 		             bounce.ispResponse = getIspResponse(sLine);
 		             bounce.mailingId = getMailingId(sLine);
 		             bounceList.add(bounce);
 		             if (checkProgressMailingId(sLine, bounceProgress)){
 		            	 bounceList.clear();
 		             }
-		             log.info("bounce added " + bounce.ispResponse);
 		    	}
 		    }
 		    br.close();
 	    } 
 		
 		catch (IOException e) {
-		    log.info(e.getMessage());
+			System.out.println("Bounce Process Exception: " + e.getMessage());
 	     } 
+		
+		System.out.println("Bounce Records Processed: " + bounceList.size());
 		
 		return bounceList;
 	
@@ -126,7 +127,7 @@ public class PostfixLogParser {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM d HH:mm:ss");
 		try{
 		 date = sdf.parse(Calendar.getInstance().get(Calendar.YEAR) + " " + logdate);
-		}catch(ParseException pe){log.info(pe.getMessage());}
+		}catch(ParseException pe){System.out.println(pe.getMessage());}
 		return new Timestamp(date.getTime());
 	}	
 	
@@ -137,15 +138,25 @@ public class PostfixLogParser {
 		 String[] remoteArr = line.split("relay=")[1].split("\\]")[0].split("\\[");
 		 remote[0] = remoteArr[0]; 
 		 remote[1] = remoteArr[1];
-		}catch(Exception e) {log.info(e.getMessage());}
+		}catch(Exception e) {System.out.println(e.getMessage());}
 		return remote;
 	}
+	
+	static private String[] getOutboundData(String line){
+		String[] outbound = new String[2];
+		try{
+		 String[] outboundArr = line.split("outhost-")[1].split("/")[0].split("--outip-");
+		 outbound[0] = outboundArr[0]; 
+		 outbound[1] = outboundArr[1];
+		}catch(Exception e) {System.out.println(e.getMessage());}
+		return outbound;
+	}	
 	
 	static private String getIspResponse(String line){
 		String response = "";
 		try{
 		  response = line.split("said: ")[1];
-		  }catch(Exception e){log.info(e.getMessage());}
+		  }catch(Exception e){System.out.println(e.getMessage());}
 		return response;
 	}
 	

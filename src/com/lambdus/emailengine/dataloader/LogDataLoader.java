@@ -8,12 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import java.util.logging.Logger;
 
 public class LogDataLoader {
 	
-	private static final Logger log = Logger.getLogger(LogDataLoader.class.getName());
-	
+	//UPDATE for Lambdus Data System
 	private static String azureConnection = "jdbc:sqlserver://v8st4k97ey.database.windows.net:1433;database=email_engine;user=email_engine@v8st4k97ey;password=!Lambdus2200;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
 	
 	
@@ -39,16 +37,16 @@ public class LogDataLoader {
 		  }
 	      try{
 		       callableStatement.executeBatch();
-		      }catch(Exception e){log.info(e.getMessage());}
+		      }catch(Exception e){System.out.println(e.getMessage());}
 		 
 		  con.close();
 		  ProgressRegister.writeLastUpdateSuccess(successList.get(successList.size() - 1).mailingId);
 		}
 		catch(SQLException sqle){
-			log.info(sqle.getMessage());
+			System.out.println(sqle.getMessage());
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 	
@@ -77,16 +75,16 @@ public class LogDataLoader {
 		  }
 	      try{
 		       callableStatement.executeBatch();
-		      }catch(Exception e){log.info(e.getMessage());}
+		      }catch(Exception e){System.out.println(e.getMessage());}
 		 
 		  con.close();
 		  ProgressRegister.writeLastUpdateBounce(bounceList.get(bounceList.size() - 1).mailingId);
 		}
 		catch(SQLException sqle){
-			log.info(sqle.getMessage());
+			System.out.println(sqle.getMessage());
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 	

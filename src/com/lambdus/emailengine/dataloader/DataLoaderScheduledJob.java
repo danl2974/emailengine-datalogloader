@@ -9,26 +9,25 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 
-import java.util.logging.Logger;
 
 public class DataLoaderScheduledJob implements Job {
-	
-	private static final Logger log = Logger.getLogger(DataLoaderScheduledJob.class.getName());
+
 	
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
 		try{
-	      Date date = new Date();
-		  System.out.println("JOB STARTED AT :" + date.toString());
+		  System.out.println("\n\nJOB STARTED AT: " + new Date().toString());
+		  
 		  ArrayList<EmailSuccess> successRecords = PostfixLogParser.processSuccess();
 		  ArrayList<EmailBounce> bounceRecords = PostfixLogParser.processBounce();
 		
 		  LogDataLoader.loadSuccessData(successRecords);
-		  LogDataLoader.loadBounceData(bounceRecords); 
-
+		  LogDataLoader.loadBounceData(bounceRecords);
+		  
+		  System.out.println("\n\nJOB ENDED AT: " + new Date().toString());
 		}
 		catch(Exception e){
-			log.info(e.getMessage());
+			System.out.println(e.getMessage());
 		}
 	        
        }
