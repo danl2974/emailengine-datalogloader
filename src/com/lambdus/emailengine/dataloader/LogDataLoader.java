@@ -23,6 +23,11 @@ public class LogDataLoader {
 	
 	static public void loadSuccessData(ArrayList<EmailSuccess> successList){
 		
+		if (successList.size() == 0){
+			System.out.println("No successes to load");
+			return;
+			}
+		
 		CallableStatement callableStatement = null;
 		
 		try{
@@ -61,10 +66,15 @@ public class LogDataLoader {
 	
 	static public void loadBounceData(ArrayList<EmailBounce> bounceList){
 		
+		if (bounceList.size() == 0){
+			System.out.println("No bounces to load");
+			return;
+			}
+		
 		CallableStatement callableStatement = null;
 		
 		try{
-		  String sproc = "{call test.LoadEmailBounce(?,?,?,?,?,?,?)}";
+		  String sproc = "{call test.LoadEmailBounce(?,?,?,?,?,?,?,?)}";
 		  Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		  Connection con = DriverManager.getConnection(azureConnection);
 		  callableStatement = con.prepareCall(sproc);
@@ -87,6 +97,7 @@ public class LogDataLoader {
 	      callableStatement.close();
 		  con.close();
 		  ProgressRegister.writeLastUpdateBounce(bounceList.get(bounceList.size() - 1).mailingId);
+		  
 		}
 		catch(SQLException sqle){
 			System.out.println(sqle.getMessage());
@@ -100,6 +111,10 @@ public class LogDataLoader {
 	
 	
 	static public void loadLocalSuccessData(ArrayList<EmailSuccess> successList){
+		
+		if (successList.size() == 0){
+			return;
+			}
 		
 		Connection con = null;
 		CallableStatement callableStatement = null;
@@ -131,6 +146,10 @@ public class LogDataLoader {
 	
 	
 	static public void loadLocalBounceData(ArrayList<EmailBounce> bounceList){
+		
+		if (bounceList.size() == 0){
+			return;
+			}
 		
 		Connection con = null;
 		CallableStatement callableStatement = null;
