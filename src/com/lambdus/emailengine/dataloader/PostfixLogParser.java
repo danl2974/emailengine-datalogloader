@@ -13,6 +13,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
+
+import org.joda.time.DateTime;
 
 
 
@@ -181,9 +184,13 @@ public class PostfixLogParser {
 		String logdate = line.substring(0, 15);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM d HH:mm:ss");
 		try{
-		 date = sdf.parse(Calendar.getInstance().get(Calendar.YEAR) + " " + logdate);
+		   date = sdf.parse(Calendar.getInstance().get(Calendar.YEAR) + " " + logdate);
 		}catch(ParseException pe){System.out.println(pe.getMessage());}
-		return new Timestamp(date.getTime());
+		  Calendar tzCal = Calendar.getInstance(TimeZone.getTimeZone("EST"));
+		  tzCal.setTime(date);
+		  tzCal.add(Calendar.HOUR_OF_DAY, -5);
+		 //return new Timestamp(date.getTime());
+		  return new Timestamp(tzCal.getTimeInMillis());
 	}	
 	
 

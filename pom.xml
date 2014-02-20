@@ -27,7 +27,13 @@
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>sqljdbc4</artifactId>
             <version>4.0</version>
-          </dependency>    
+          </dependency>
+          
+          <dependency>
+	        <groupId>joda-time</groupId>
+	        <artifactId>joda-time</artifactId>
+	        <version>1.5.2</version>
+          </dependency>  
           
      </dependencies>
   
