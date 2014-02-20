@@ -19,6 +19,8 @@ public class EmailBounce {
 	public String ispResponse;
 	
 	public String mailingId;
+	
+	public String templateId;
 
 }
 

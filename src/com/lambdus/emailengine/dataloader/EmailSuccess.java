@@ -17,5 +17,6 @@ public class EmailSuccess {
 	public String remoteIP;
 	
 	public String mailingId;
-
+	
+	public String templateId;
 }

@@ -7,8 +7,12 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 
 
@@ -20,11 +24,15 @@ public class PostfixLogParser {
 	
 	private static final String POSTFIX_BOUNCE_MARKER = "status=bounced";
 	
+	private static final String POSTFIX_CLEANUP_MARKER = "/cleanup";
+	
+	private static final String POSTFIX_LOCAL_RELAY_MARKER = "postfix/smtp";
 
 		
 	public static ArrayList<EmailSuccess> processSuccess(){
 	
 		ArrayList<EmailSuccess> successList = new ArrayList<EmailSuccess>();
+		HashMap<String,String> templateMtaHash = new HashMap<String,String>();
 		String successProgress = ProgressRegister.readLastUpdateSuccess();
 		System.out.println("Success Record progress " + successProgress);
 		
@@ -35,7 +43,7 @@ public class PostfixLogParser {
 		    while ((sLine = br.readLine()) != null) 
 		    {
 		    	
-		        if(sLine.indexOf(POSTFIX_SUCCESS_MARKER) != -1){
+		        if(sLine.indexOf(POSTFIX_SUCCESS_MARKER) != -1 && sLine.indexOf(POSTFIX_LOCAL_RELAY_MARKER) == -1){
 		             EmailSuccess success = new EmailSuccess(); 		
 		             success.toAddress = getToAddress(sLine);
 		             success.timestamp = getTimestamp(sLine);
@@ -45,7 +53,7 @@ public class PostfixLogParser {
 		             String[] outboundData = getOutboundData(sLine);
 		             success.outboundHost = outboundData[0];
 		             success.outboundIP = outboundData[1];
-		             success.mailingId = getMailingId(sLine);
+		             success.mailingId = getMailingId(sLine);		             
 		             successList.add(success);
 		             if (checkProgressMailingId(sLine, successProgress))
 		               {
@@ -54,14 +62,36 @@ public class PostfixLogParser {
 		            
 		    	     }
 		        
+		           if(sLine.indexOf(POSTFIX_CLEANUP_MARKER) != -1){
+		        	   String mtaId = getMtaId(sLine);
+		        	   String msgId = getMessageId(sLine);
+		        	   String embedTemplateId = msgId.split("\\.")[1];
+		        	   templateMtaHash.put(mtaId, embedTemplateId);
+		           }
+
 		    	
 		    }
+		    
 		    br.close();
+		    
+		    if (successList.size() > 0 && templateMtaHash.size() > 0){
+		    	
+		    	for (int i = 0; i < successList.size(); i++){
+		    		
+		    		successList.get(i).templateId = templateMtaHash.get(successList.get(i).mailingId);
+		    		
+		    	}
+		    }
+		    
+		   
 	    } 
 		
 		catch (IOException e) {
-			System.out.println("Success Process Exception: " + e.getMessage());
-	     } 
+			System.out.println("Success Process IOException: " + e.getMessage());
+	     }
+		catch (Exception ex) {
+			System.out.println("Success Process Exception: " + ex.getMessage());
+	     } 		
 		
 		System.out.println("Success Records Processed: " + successList.size());
 		
@@ -73,6 +103,7 @@ public class PostfixLogParser {
 	public static  ArrayList<EmailBounce> processBounce(){
 
 		ArrayList<EmailBounce> bounceList = new ArrayList<EmailBounce>();
+		HashMap<String,String> templateMtaHash = new HashMap<String,String>();
 		String bounceProgress = ProgressRegister.readLastUpdateBounce();
 		System.out.println("Bounce Record progress " + bounceProgress);
 		
@@ -99,19 +130,43 @@ public class PostfixLogParser {
 		            	 bounceList.clear();
 		             }
 		    	}
+		    	
+		        if(sLine.indexOf(POSTFIX_CLEANUP_MARKER) != -1){
+		        	   String mtaId = getMtaId(sLine);
+		        	   String msgId = getMessageId(sLine);
+		        	   String embedTemplateId = msgId.split("\\.")[1];
+		        	   templateMtaHash.put(mtaId, embedTemplateId);
+		           }
+		    	
+		    	
 		    }
-		    br.close();
+            br.close();
+		    
+		    if (bounceList.size() > 0 && templateMtaHash.size() > 0){
+		    	
+		    	for (int i = 0; i < bounceList.size(); i++){
+		    		
+		    		bounceList.get(i).templateId = templateMtaHash.get(bounceList.get(i).mailingId);
+		    		
+		    	}
+		     }
+		    
 	    } 
 		
 		catch (IOException e) {
-			System.out.println("Bounce Process Exception: " + e.getMessage());
-	     } 
+			System.out.println("Bounce Process IOException: " + e.getMessage());
+	     }
+		catch (Exception ex) {
+			System.out.println("Bounce Process Exception: " + ex.getMessage());
+	     } 		
 		
 		System.out.println("Bounce Records Processed: " + bounceList.size());
 		
 		return bounceList;
 	
 	}	
+	
+	
 	
 	
 
@@ -161,8 +216,16 @@ public class PostfixLogParser {
 	}
 	
 	static private String getMailingId(String line){
-		return line.split(": to")[0].split("]: ")[1];
+		return line.split(": to")[0].split("\\]: ")[1];
 	}
+	
+	static private String getMtaId(String line){
+		return line.split(": message-id")[0].split("\\]: ")[1];
+	}	
+	
+	static private String getMessageId(String line){
+		return line.split("message-id=<")[1].split(">")[0];
+	}		
 	
 	private static boolean checkProgressMailingId(String line, String progress){
 		int found = line.indexOf(progress);
