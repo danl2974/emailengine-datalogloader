@@ -16,7 +16,7 @@ public class LogDataLoader {
 	//UPDATE for Lambdus Data System
 	private static String azureConnection = "jdbc:sqlserver://v8st4k97ey.database.windows.net:1433;database=email_engine;user=email_engine@v8st4k97ey;password=!Lambdus2200;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
 	
-	private static String localjdbcHandle = "jdbc:mysql://localhost:3306/email_engine";
+	private static String localjdbcHandle = "jdbc:mysql://54.80.250.241:3306/email_engine";
 	private static String localdbusername = "dan";
 	private static String localdbpassword = "lambdus2200";
 	

@@ -68,8 +68,10 @@ public class PostfixLogParser {
 		           if(sLine.indexOf(POSTFIX_CLEANUP_MARKER) != -1){
 		        	   String mtaId = getMtaId(sLine);
 		        	   String msgId = getMessageId(sLine);
+		        	   try{
 		        	   String embedTemplateId = msgId.split("\\.")[1];
 		        	   templateMtaHash.put(mtaId, embedTemplateId);
+		        	   }catch(Exception e){System.out.println(e.getMessage());}
 		           }
 
 		    	
@@ -137,8 +139,10 @@ public class PostfixLogParser {
 		        if(sLine.indexOf(POSTFIX_CLEANUP_MARKER) != -1){
 		        	   String mtaId = getMtaId(sLine);
 		        	   String msgId = getMessageId(sLine);
+		        	   try{
 		        	   String embedTemplateId = msgId.split("\\.")[1];
 		        	   templateMtaHash.put(mtaId, embedTemplateId);
+		        	   }catch(Exception e){System.out.println(e.getMessage());}
 		           }
 		    	
 		    	
@@ -174,12 +178,14 @@ public class PostfixLogParser {
 	
 
 	static private String getToAddress(String line){
+		
 		try{
 		return line.split("to=<")[1].split(">")[0];
 		}catch(Exception e) {return "";}
 	}
 	
 	static private Timestamp getTimestamp(String line){
+		
 		Date date = new Date();
 		String logdate = line.substring(0, 15);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM d HH:mm:ss");
@@ -195,6 +201,7 @@ public class PostfixLogParser {
 	
 
 	static private String[] getRemoteData(String line){
+		
 		String[] remote = new String[2];
 		try{
 		 String[] remoteArr = line.split("relay=")[1].split("\\]")[0].split("\\[");
@@ -205,6 +212,7 @@ public class PostfixLogParser {
 	}
 	
 	static private String[] getOutboundData(String line){
+		
 		String[] outbound = new String[2];
 		try{
 		 String[] outboundArr = line.split("outhost-")[1].split("/")[0].split("--outip-");
@@ -215,6 +223,7 @@ public class PostfixLogParser {
 	}	
 	
 	static private String getIspResponse(String line){
+		
 		String response = "";
 		try{
 		  response = line.split("said: ")[1];
@@ -223,18 +232,25 @@ public class PostfixLogParser {
 	}
 	
 	static private String getMailingId(String line){
+		try{
 		return line.split(": to")[0].split("\\]: ")[1];
+		}catch(Exception e){System.out.println(e.getMessage());return "";}
 	}
 	
 	static private String getMtaId(String line){
+		try{
 		return line.split(": message-id")[0].split("\\]: ")[1];
+		}catch(Exception e){System.out.println(e.getMessage());return "";}
 	}	
 	
 	static private String getMessageId(String line){
+		try{
 		return line.split("message-id=<")[1].split(">")[0];
+		}catch(Exception e){System.out.println(e.getMessage());return "";}
 	}		
 	
 	private static boolean checkProgressMailingId(String line, String progress){
+		
 		int found = line.indexOf(progress);
 		if (found > 0){
 			return true;
