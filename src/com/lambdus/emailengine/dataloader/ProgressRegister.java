@@ -104,5 +104,56 @@ public class ProgressRegister {
 		
 	}	
 	
+	
+	
+	
+	
+	public static String readLastUpdateComplaint(){
+		
+		StringBuilder sb = new StringBuilder();
+		
+		try{
+			File file = new File("/usr/local/share/datalogloader/fbl/dataloader-progress-complaint.log");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileReader fr = new FileReader(file.getAbsoluteFile());
+			BufferedReader br = new BufferedReader(fr);
+			String sLine;
+			while ((sLine = br.readLine()) != null) {
+				sb.append(sLine);
+			}
+			br.close();
+		}
+		catch(Exception e){
+		  	
+		}
+		System.out.println("Last Update Complaint Read: " + sb.toString());
+		return sb.toString();
+		
+	}
+	
+	public static boolean writeLastUpdateComplaint(String progressInfo){
+		
+		try{
+			File file = new File("/usr/local/share/datalogloader/fbl/dataloader-progress-complaint.log");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileWriter fw = new FileWriter(file.getAbsoluteFile(), false);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(progressInfo);
+			bw.close();
+			System.out.println("Last Update Complaint Write: " + progressInfo);
+			
+			return true;
+		}
+		catch(Exception e){
+			return false;
+		}
+		
+	}	
+	
+	
 
 }
