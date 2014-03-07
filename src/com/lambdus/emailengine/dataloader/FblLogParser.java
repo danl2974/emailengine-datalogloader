@@ -43,13 +43,15 @@ public class FblLogParser {
 	           fbl.templateId = recordArr[2];
 	           fbl.uuid = recordArr[3];
 	           fbl.domain = recordArr[4];
+	           fbl.recordline = sLine;
 	           fblList.add(fbl);
 	           if (sLine == fblProgress)
 	           {
 	              fblList.clear();
 	           }
 		    }	
-		    	
+		    
+		    br.close();	
 	     }
 		 catch(Exception e){System.out.println(e.getMessage());}
 	  

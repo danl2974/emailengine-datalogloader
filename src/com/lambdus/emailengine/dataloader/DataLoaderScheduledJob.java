@@ -20,13 +20,16 @@ public class DataLoaderScheduledJob implements Job {
 		  
 		  ArrayList<EmailSuccess> successRecords = PostfixLogParser.processSuccess();
 		  ArrayList<EmailBounce> bounceRecords = PostfixLogParser.processBounce();
+		  ArrayList<EmailFbl> fblRecords = FblLogParser.processFblData();
 
 		  //Drop Data to Lambdus system
 		  LogDataLoader.loadSuccessData(successRecords);
 		  LogDataLoader.loadBounceData(bounceRecords);
+		  LogDataLoader.loadFblData(fblRecords);
 		  //Drop Data to Local
 		  LogDataLoader.loadLocalSuccessData(successRecords);
 		  LogDataLoader.loadLocalBounceData(bounceRecords);
+		  LogDataLoader.loadLocalFblData(fblRecords);
 		  
 		  System.out.println("\n\nJOB ENDED AT: " + new Date().toString());
 		}

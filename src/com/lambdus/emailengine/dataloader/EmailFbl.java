@@ -13,5 +13,7 @@ public class EmailFbl {
 	public String domain;
 	
 	public String uuid;
+	
+	public String recordline;
 
 }

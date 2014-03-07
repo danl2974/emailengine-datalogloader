@@ -14,7 +14,7 @@ import java.util.Date;
 public class LogDataLoader {
 	
 	//UPDATE for Lambdus Data System
-	private static String azureConnection = "jdbc:sqlserver://v8st4k97ey.database.windows.net:1433;database=email_engine;user=email_engine@v8st4k97ey;password=!Lambdus2200;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+	private static String azureConnection = "jdbc:sqlserver://k22cep04af.database.windows.net:1433;database=test;user=emailengine@k22cep04af;password={your_password_here};encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
 	
 	private static String localjdbcHandle = "jdbc:mysql://54.80.250.241:3306/email_engine";
 	private static String localdbusername = "dan";
@@ -180,4 +180,79 @@ public class LogDataLoader {
 	}		
 	
 
+	
+
+	static public void loadFblData(ArrayList<EmailFbl> fblList){
+		
+		if (fblList.size() == 0){
+			System.out.println("No fbl complaints to load");
+			return;
+			}
+		
+		CallableStatement callableStatement = null;
+		
+		try{
+		  String sproc = "{call test.LoadEmailFbl(?,?,?,?,?)}";
+		  Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		  Connection con = DriverManager.getConnection(azureConnection);
+		  callableStatement = con.prepareCall(sproc);
+		  
+		  for (EmailFbl ef : fblList){
+		      callableStatement.setTimestamp(1, ef.timestamp);
+		      callableStatement.setString(2, ef.emailAddress);
+		      callableStatement.setInt(3, Integer.valueOf(ef.templateId));
+		      callableStatement.setString(4, ef.domain);
+		      callableStatement.setString(5, ef.uuid);
+		      callableStatement.addBatch();
+		  }
+	      try{
+		       callableStatement.executeBatch();
+		      }catch(Exception e){System.out.println(e.getMessage());}
+	      
+	      callableStatement.close();		 
+		  con.close();
+		  ProgressRegister.writeLastUpdateComplaint(fblList.get(fblList.size() - 1).recordline);
+		}
+		catch(SQLException sqle){
+			System.out.println(sqle.getMessage());
+		}
+		catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+	}	
+
+	
+	
+	static public void loadLocalFblData(ArrayList<EmailFbl> fblList){
+		
+		if (fblList.size() == 0){
+			return;
+			}
+		
+		Connection con = null;
+		CallableStatement callableStatement = null;
+	    try {
+	    	 Class.forName("com.mysql.jdbc.Driver");
+		     con = DriverManager.getConnection(localjdbcHandle, localdbusername, localdbpassword);
+		     
+		     String sproc = "{call addFblComplaint(?,?,?,?,?)}";
+		     callableStatement = con.prepareCall(sproc);
+		     
+		     for (EmailFbl ef : fblList){
+		       callableStatement.setTimestamp(1, ef.timestamp);
+		       callableStatement.setString(2, ef.emailAddress);
+		       callableStatement.setInt(3, Integer.valueOf(ef.templateId));
+		       callableStatement.setString(4, ef.domain);
+		       callableStatement.setString(5, ef.uuid);
+		       callableStatement.addBatch();
+		     }
+		     callableStatement.executeBatch();
+		     callableStatement.close();
+		     con.close();
+	    }
+	    catch(Exception e){System.out.println(e.getMessage());}
+	    System.out.println("Local DB FBL Write Done");
+	}
+	
+	
 }
