@@ -14,7 +14,7 @@ import java.util.Date;
 public class LogDataLoader {
 	
 	//UPDATE for Lambdus Data System
-	private static String azureConnection = "jdbc:sqlserver://k22cep04af.database.windows.net:1433;database=test;user=emailengine@k22cep04af;password={your_password_here};encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
+	private static String azureConnection = "jdbc:sqlserver://k22cep04af.database.windows.net:1433;database=email_engine;user=emailengine@k22cep04af;password=!Welco2200;encrypt=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;";
 	
 	private static String localjdbcHandle = "jdbc:mysql://54.80.250.241:3306/email_engine";
 	private static String localdbusername = "dan";

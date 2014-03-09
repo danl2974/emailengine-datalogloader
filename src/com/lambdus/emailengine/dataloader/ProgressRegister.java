@@ -15,7 +15,7 @@ public class ProgressRegister {
 		StringBuilder sb = new StringBuilder();
 		
 		try{
-			File file = new File("/var/log/dataloader-progress-success.log");
+			File file = new File("/usr/local/share/datalogloader/progress/dataloader-progress-success.log");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -38,7 +38,7 @@ public class ProgressRegister {
 	public static boolean writeLastUpdateSuccess(String progressInfo){
 		
 		try{
-			File file = new File("/var/log/dataloader-progress-success.log");
+			File file = new File("/usr/local/share/datalogloader/progress/dataloader-progress-success.log");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -63,7 +63,7 @@ public class ProgressRegister {
 		StringBuilder sb = new StringBuilder();
 		
 		try{
-			File file = new File("/var/log/dataloader-progress-bounce.log");
+			File file = new File("/usr/local/share/datalogloader/progress/dataloader-progress-bounce.log");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -86,7 +86,7 @@ public class ProgressRegister {
 	public static boolean writeLastUpdateBounce(String progressInfo){
 		
 		try{
-			File file = new File("/var/log/dataloader-progress-bounce.log");
+			File file = new File("/usr/local/share/datalogloader/progress/dataloader-progress-bounce.log");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -113,7 +113,7 @@ public class ProgressRegister {
 		StringBuilder sb = new StringBuilder();
 		
 		try{
-			File file = new File("/usr/local/share/datalogloader/fbl/dataloader-progress-complaint.log");
+			File file = new File("/usr/local/share/datalogloader/progress/dataloader-progress-complaint.log");
 			if (!file.exists()) {
 				file.createNewFile();
 			}
@@ -136,7 +136,7 @@ public class ProgressRegister {
 	public static boolean writeLastUpdateComplaint(String progressInfo){
 		
 		try{
-			File file = new File("/usr/local/share/datalogloader/fbl/dataloader-progress-complaint.log");
+			File file = new File("/usr/local/share/datalogloader/progress/dataloader-progress-complaint.log");
 			if (!file.exists()) {
 				file.createNewFile();
 			}

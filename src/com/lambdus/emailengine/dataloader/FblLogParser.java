@@ -27,7 +27,7 @@ public class FblLogParser {
 		
 		ArrayList<EmailFbl> fblList = new ArrayList<EmailFbl>();
 		String fblProgress = ProgressRegister.readLastUpdateComplaint();
-		System.out.println("Success Record progress " + fblProgress);
+		System.out.println("Fbl Record progress " + fblProgress);
 		
 		try{
 			BufferedReader br = new BufferedReader(new FileReader( LOG_PATH ));
@@ -38,14 +38,14 @@ public class FblLogParser {
 		    {		    
 	           EmailFbl fbl = new EmailFbl();
 	           String[] recordArr = sLine.split("\\|");
-	           fbl.timestamp = Timestamp.valueOf(recordArr[0]);
-	           fbl.emailAddress = recordArr[1];
-	           fbl.templateId = recordArr[2];
-	           fbl.uuid = recordArr[3];
-	           fbl.domain = recordArr[4];
+	           fbl.timestamp = Timestamp.valueOf(recordArr[0].trim());
+	           fbl.emailAddress = recordArr[1].trim();
+	           fbl.templateId = recordArr[2].trim();
+	           fbl.uuid = recordArr[3].trim();
+	           fbl.domain = recordArr[4].trim();
 	           fbl.recordline = sLine;
 	           fblList.add(fbl);
-	           if (sLine == fblProgress)
+	           if (fblProgress.indexOf(sLine) >= 0)
 	           {
 	              fblList.clear();
 	           }

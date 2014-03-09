@@ -54,8 +54,8 @@ public class PostfixLogParser {
 		             success.remoteHost = remoteData[0];
 		             success.remoteIP = remoteData[1];
 		             String[] outboundData = getOutboundData(sLine);
-		             success.outboundHost = outboundData[0];
-		             success.outboundIP = outboundData[1];
+		             success.outboundHost = outboundData[0] != null ? outboundData[0] : "None";
+		             success.outboundIP = outboundData[1] != null ? outboundData[1] : "None";
 		             success.mailingId = getMailingId(sLine);		             
 		             successList.add(success);
 		             if (checkProgressMailingId(sLine, successProgress))
@@ -68,9 +68,11 @@ public class PostfixLogParser {
 		           if(sLine.indexOf(POSTFIX_CLEANUP_MARKER) != -1){
 		        	   String mtaId = getMtaId(sLine);
 		        	   String msgId = getMessageId(sLine);
-		        	   try{
+		        	   try{	   
 		        	   String embedTemplateId = msgId.split("\\.")[1];
-		        	   templateMtaHash.put(mtaId, embedTemplateId);
+		        	   if(embedTemplateId.matches("-?\\d+")){
+		        	        templateMtaHash.put(mtaId, embedTemplateId);
+		        	       }
 		        	   }catch(Exception e){System.out.println(e.getMessage());}
 		           }
 
@@ -83,7 +85,13 @@ public class PostfixLogParser {
 		    	
 		    	for (int i = 0; i < successList.size(); i++){
 		    		
-		    		successList.get(i).templateId = templateMtaHash.get(successList.get(i).mailingId);
+		    		if(templateMtaHash.containsKey(successList.get(i).mailingId))
+		    		{
+		    		   successList.get(i).templateId = templateMtaHash.get(successList.get(i).mailingId);
+		    		}
+		    		else{
+		    		   successList.get(i).templateId = "0";
+		    		}
 		    		
 		    	}
 		    }
@@ -123,11 +131,11 @@ public class PostfixLogParser {
 		             bounce.toAddress = getToAddress(sLine);
 		             bounce.timestamp = getTimestamp(sLine);
 		             String[] remoteData = getRemoteData(sLine);
-		             bounce.remoteHost = remoteData[0];
-		             bounce.remoteIP = remoteData[1];
+		             bounce.remoteHost = remoteData[0] != null ? remoteData[0] : "None";
+		             bounce.remoteIP = remoteData[1] != null ? remoteData[1] : "None";
 		             String[] outboundData = getOutboundData(sLine);
-		             bounce.outboundHost = outboundData[0];
-		             bounce.outboundIP = outboundData[1];
+		             bounce.outboundHost = outboundData[0] != null ? outboundData[0] : "None";
+		             bounce.outboundIP = outboundData[1] != null ? outboundData[1] : "None";
 		             bounce.ispResponse = getIspResponse(sLine);
 		             bounce.mailingId = getMailingId(sLine);
 		             bounceList.add(bounce);
@@ -141,7 +149,9 @@ public class PostfixLogParser {
 		        	   String msgId = getMessageId(sLine);
 		        	   try{
 		        	   String embedTemplateId = msgId.split("\\.")[1];
-		        	   templateMtaHash.put(mtaId, embedTemplateId);
+		        	   if(embedTemplateId.matches("-?\\d+")){
+		        	       templateMtaHash.put(mtaId, embedTemplateId);
+		        	       }
 		        	   }catch(Exception e){System.out.println(e.getMessage());}
 		           }
 		    	
@@ -152,9 +162,14 @@ public class PostfixLogParser {
 		    if (bounceList.size() > 0 && templateMtaHash.size() > 0){
 		    	
 		    	for (int i = 0; i < bounceList.size(); i++){
-		    		
-		    		bounceList.get(i).templateId = templateMtaHash.get(bounceList.get(i).mailingId);
-		    		
+		    	    
+		    		if(templateMtaHash.containsKey(bounceList.get(i).mailingId))
+		    		{
+		    		  bounceList.get(i).templateId = templateMtaHash.get(bounceList.get(i).mailingId);
+		    		}
+		    		else{
+		    		  bounceList.get(i).templateId = "0";
+		    		}
 		    	}
 		     }
 		    
@@ -186,17 +201,17 @@ public class PostfixLogParser {
 	
 	static private Timestamp getTimestamp(String line){
 		
+		try{
 		Date date = new Date();
 		String logdate = line.substring(0, 15);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM d HH:mm:ss");
-		try{
-		   date = sdf.parse(Calendar.getInstance().get(Calendar.YEAR) + " " + logdate);
-		}catch(ParseException pe){System.out.println(pe.getMessage());}
+		date = sdf.parse(Calendar.getInstance().get(Calendar.YEAR) + " " + logdate);
 		  Calendar tzCal = Calendar.getInstance(TimeZone.getTimeZone("EST"));
 		  tzCal.setTime(date);
 		  tzCal.add(Calendar.HOUR_OF_DAY, -5);
-		 //return new Timestamp(date.getTime());
+		  //return new Timestamp(date.getTime());
 		  return new Timestamp(tzCal.getTimeInMillis());
+		}catch(Exception e){System.out.println(e.getMessage()); return new Timestamp(0);}
 	}	
 	
 
