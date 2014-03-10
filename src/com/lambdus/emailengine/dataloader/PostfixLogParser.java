@@ -73,7 +73,7 @@ public class PostfixLogParser {
 		        	   if(embedTemplateId.matches("-?\\d+")){
 		        	        templateMtaHash.put(mtaId, embedTemplateId);
 		        	       }
-		        	   }catch(Exception e){System.out.println(e.getMessage());}
+		        	   }catch(Exception e){}
 		           }
 
 		    	
@@ -152,7 +152,7 @@ public class PostfixLogParser {
 		        	   if(embedTemplateId.matches("-?\\d+")){
 		        	       templateMtaHash.put(mtaId, embedTemplateId);
 		        	       }
-		        	   }catch(Exception e){System.out.println(e.getMessage());}
+		        	   }catch(Exception e){}
 		           }
 		    	
 		    	
@@ -211,7 +211,7 @@ public class PostfixLogParser {
 		  tzCal.add(Calendar.HOUR_OF_DAY, -5);
 		  //return new Timestamp(date.getTime());
 		  return new Timestamp(tzCal.getTimeInMillis());
-		}catch(Exception e){System.out.println(e.getMessage()); return new Timestamp(0);}
+		}catch(Exception e){return new Timestamp(0);}
 	}	
 	
 
@@ -222,7 +222,7 @@ public class PostfixLogParser {
 		 String[] remoteArr = line.split("relay=")[1].split("\\]")[0].split("\\[");
 		 remote[0] = remoteArr[0]; 
 		 remote[1] = remoteArr[1];
-		}catch(Exception e) {System.out.println(e.getMessage());}
+		}catch(Exception e) {return remote;}
 		return remote;
 	}
 	
@@ -233,7 +233,7 @@ public class PostfixLogParser {
 		 String[] outboundArr = line.split("outhost-")[1].split("/")[0].split("--outip-");
 		 outbound[0] = outboundArr[0]; 
 		 outbound[1] = outboundArr[1];
-		}catch(Exception e) {System.out.println(e.getMessage());}
+		}catch(Exception e) {return outbound;}
 		return outbound;
 	}	
 	
@@ -242,26 +242,26 @@ public class PostfixLogParser {
 		String response = "";
 		try{
 		  response = line.split("said: ")[1];
-		  }catch(Exception e){System.out.println(e.getMessage());}
+		  }catch(Exception e){return "";}
 		return response;
 	}
 	
 	static private String getMailingId(String line){
 		try{
 		return line.split(": to")[0].split("\\]: ")[1];
-		}catch(Exception e){System.out.println(e.getMessage());return "";}
+		}catch(Exception e){return "";}
 	}
 	
 	static private String getMtaId(String line){
 		try{
 		return line.split(": message-id")[0].split("\\]: ")[1];
-		}catch(Exception e){System.out.println(e.getMessage());return "";}
+		}catch(Exception e){return "";}
 	}	
 	
 	static private String getMessageId(String line){
 		try{
 		return line.split("message-id=<")[1].split(">")[0];
-		}catch(Exception e){System.out.println(e.getMessage());return "";}
+		}catch(Exception e){return "";}
 	}		
 	
 	private static boolean checkProgressMailingId(String line, String progress){
