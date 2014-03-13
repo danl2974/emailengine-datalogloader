@@ -48,17 +48,17 @@ public class LogDataLoader {
 		  }
 	      try{
 		       callableStatement.executeBatch();
-		      }catch(Exception e){System.out.println(e.getMessage());}
+		      }catch(Exception e){System.out.println("EXCEPTION: loadSuccessData " + e.getMessage());}
 	      
 	      callableStatement.close();		 
 		  con.close();
 		  ProgressRegister.writeLastUpdateSuccess(successList.get(successList.size() - 1).mailingId);
 		}
 		catch(SQLException sqle){
-			System.out.println(sqle.getMessage());
+			System.out.println("SQL EXCEPTION: loadSuccessData " + sqle.getMessage());
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			System.out.println("EXCEPTION: loadSuccessData " + e.getMessage());
 		}
 	}
 	
@@ -100,10 +100,10 @@ public class LogDataLoader {
 		  
 		}
 		catch(SQLException sqle){
-			System.out.println(sqle.getMessage());
+			System.out.println("SQL EXCEPTION: loadBounceData " + sqle.getMessage());
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			System.out.println("EXCEPTION: loadBounceData " + e.getMessage());
 		}
 	}
 	
@@ -139,7 +139,7 @@ public class LogDataLoader {
 		     callableStatement.close();
 		     con.close();
 	    }
-	    catch(Exception e){System.out.println(e.getMessage());}
+	    catch(Exception e){System.out.println("EXCEPTION: loadLocalSuccessData " + e.getMessage());}
 	    System.out.println("Local DB Success Write Done");
 	}	
 	
@@ -175,7 +175,7 @@ public class LogDataLoader {
 		     callableStatement.close();
 		     con.close();
 	    }
-	    catch(Exception e){System.out.println(e.getMessage());}
+	    catch(Exception e){System.out.println("EXCEPTION: loadLocalBounceData " + e.getMessage());}
 	    System.out.println("Local DB Bounce Write Done");
 	}		
 	
@@ -207,17 +207,17 @@ public class LogDataLoader {
 		  }
 	      try{
 		       callableStatement.executeBatch();
-		      }catch(Exception e){System.out.println(e.getMessage());}
+		      }catch(Exception e){System.out.println("EXCEPTION: loadFblData " + e.getMessage());}
 	      
 	      callableStatement.close();		 
 		  con.close();
 		  ProgressRegister.writeLastUpdateComplaint(fblList.get(fblList.size() - 1).recordline);
 		}
 		catch(SQLException sqle){
-			System.out.println(sqle.getMessage());
+			System.out.println("SQL EXCEPTION: loadFblData " + sqle.getMessage());
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			System.out.println("EXCEPTION: loadFblData " + e.getMessage());
 		}
 	}	
 
@@ -250,7 +250,7 @@ public class LogDataLoader {
 		     callableStatement.close();
 		     con.close();
 	    }
-	    catch(Exception e){System.out.println(e.getMessage());}
+	    catch(Exception e){System.out.println("EXCEPTION: loadLocalFblData " + e.getMessage());}
 	    System.out.println("Local DB FBL Write Done");
 	}
 	

@@ -37,7 +37,7 @@ public class FblLogParser {
 		    while ((sLine = br.readLine()) != null) 
 		    {		    
 	           EmailFbl fbl = new EmailFbl();
-	           String[] recordArr = sLine.split("\\|");
+	           String[] recordArr = sLine.split("::");
 	           fbl.timestamp = Timestamp.valueOf(recordArr[0].trim());
 	           fbl.emailAddress = recordArr[1].trim();
 	           fbl.templateId = recordArr[2].trim();
