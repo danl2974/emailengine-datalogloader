@@ -31,7 +31,7 @@ public class LogDataLoader {
 		CallableStatement callableStatement = null;
 		
 		try{
-		  String sproc = "{call test.LoadEmailSuccess(?,?,?,?,?,?,?)}";
+		  String sproc = "{call test.LoadEmailSuccess(?,?,?,?,?,?,?,?)}";
 		  Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		  Connection con = DriverManager.getConnection(azureConnection);
 		  callableStatement = con.prepareCall(sproc);
@@ -44,6 +44,7 @@ public class LogDataLoader {
 		      callableStatement.setString(5, es.remoteIP);
 		      callableStatement.setString(6, es.remoteHost);
 		      callableStatement.setInt(7, Integer.valueOf(es.templateId));
+		      callableStatement.setString(8, es.uuid);
 		      callableStatement.addBatch();
 		  }
 	      try{
@@ -122,7 +123,7 @@ public class LogDataLoader {
 	    	 Class.forName("com.mysql.jdbc.Driver");
 		     con = DriverManager.getConnection(localjdbcHandle, localdbusername, localdbpassword);
 		     
-		     String sproc = "{call addSendSuccess(?,?,?,?,?,?,?)}";
+		     String sproc = "{call addSendSuccess(?,?,?,?,?,?,?,?)}";
 		     callableStatement = con.prepareCall(sproc);
 		     
 		     for (EmailSuccess es : successList){
@@ -133,6 +134,7 @@ public class LogDataLoader {
 		       callableStatement.setString(5, es.remoteIP);
 		       callableStatement.setString(6, es.remoteHost);
 		       callableStatement.setInt(7, Integer.valueOf(es.templateId));
+		       callableStatement.setString(8, es.uuid);
 		       callableStatement.addBatch();
 		     }
 		     callableStatement.executeBatch();

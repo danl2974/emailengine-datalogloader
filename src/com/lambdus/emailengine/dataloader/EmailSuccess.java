@@ -19,4 +19,6 @@ public class EmailSuccess {
 	public String mailingId;
 	
 	public String templateId;
+	
+	public String uuid;
 }

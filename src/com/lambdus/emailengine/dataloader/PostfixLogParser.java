@@ -29,13 +29,15 @@ public class PostfixLogParser {
 	
 	private static final String POSTFIX_CLEANUP_MARKER = "/cleanup";
 	
+	private static final String POSTFIX_CLEANUP_MSGID_MARKER = "message-id";
+	
 	private static final String POSTFIX_LOCAL_RELAY_MARKER = "postfix/smtp";
 
 		
 	public static ArrayList<EmailSuccess> processSuccess(){
 	
 		ArrayList<EmailSuccess> successList = new ArrayList<EmailSuccess>();
-		HashMap<String,String> templateMtaHash = new HashMap<String,String>();
+		HashMap<String,ArrayList<String>> templateMtaHash = new HashMap<String,ArrayList<String>>();
 		String successProgress = ProgressRegister.readLastUpdateSuccess();
 		System.out.println("Success Record progress " + successProgress);
 		
@@ -65,13 +67,19 @@ public class PostfixLogParser {
 		            
 		    	     }
 		        
-		           if(sLine.indexOf(POSTFIX_CLEANUP_MARKER) != -1){
+		           if(sLine.indexOf(POSTFIX_CLEANUP_MARKER) != -1  && sLine.indexOf(POSTFIX_CLEANUP_MSGID_MARKER) != -1 ){
 		        	   String mtaId = getMtaId(sLine);
 		        	   String msgId = getMessageId(sLine);
-		        	   try{	   
-		        	   String embedTemplateId = msgId.split("\\.")[1];
+		        	   try{
+		        	   String[] messageidParts = msgId.split("\\.");	   
+		        	   String embedTemplateId = messageidParts[1];
+		        	   String embedUuid = messageidParts[2];
+		        	   
 		        	   if(embedTemplateId.matches("-?\\d+")){
-		        	        templateMtaHash.put(mtaId, embedTemplateId);
+		        		    ArrayList<String> cleanupList = new ArrayList<String>();
+			        	    cleanupList.add(embedTemplateId);
+			        	    cleanupList.add(embedUuid);
+		        	        templateMtaHash.put(mtaId, cleanupList);
 		        	       }
 		        	   }catch(Exception e){}
 		           }
@@ -87,10 +95,12 @@ public class PostfixLogParser {
 		    		
 		    		if(templateMtaHash.containsKey(successList.get(i).mailingId))
 		    		{
-		    		   successList.get(i).templateId = templateMtaHash.get(successList.get(i).mailingId);
+		    		   successList.get(i).templateId = templateMtaHash.get(successList.get(i).mailingId).get(0);
+		    		   successList.get(i).uuid = templateMtaHash.get(successList.get(i).mailingId).get(1);
 		    		}
 		    		else{
 		    		   successList.get(i).templateId = "0";
+		    		   successList.get(i).uuid = "None";
 		    		}
 		    		
 		    	}
@@ -144,7 +154,7 @@ public class PostfixLogParser {
 		             }
 		    	}
 		    	
-		        if(sLine.indexOf(POSTFIX_CLEANUP_MARKER) != -1){
+		        if(sLine.indexOf(POSTFIX_CLEANUP_MARKER) != -1 && sLine.indexOf(POSTFIX_CLEANUP_MSGID_MARKER) != -1 ){
 		        	   String mtaId = getMtaId(sLine);
 		        	   String msgId = getMessageId(sLine);
 		        	   try{
@@ -262,8 +272,8 @@ public class PostfixLogParser {
 		try{
 		return line.split("message-id=<")[1].split(">")[0];
 		}catch(Exception e){return "";}
-	}		
-	
+	}
+		
 	private static boolean checkProgressMailingId(String line, String progress){
 		
 		int found = line.indexOf(progress);
